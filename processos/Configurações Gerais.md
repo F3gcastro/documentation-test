@@ -176,6 +176,8 @@ Obs: O campo de "expiration" não está sendo carregado.
 ## EmailTypes
 Tipos de email, como pessoal, comercial...
 
+É diferente de [MailingTypes](#mailingtypes), esta outra tendo relação com tipos ou finalidades de mensagens enviadas via email.
+
 Nome do layout: Email
 
 Schema no NavegaLibs: [Schema Base](./Schema%20Base.md)
@@ -195,7 +197,7 @@ Origem dos campos: [Mock](../apoio/Mock.md)
 
 
 ## DiseaseClassification
-DESCRIÇÃO
+Classificação internacional de doenças (em português, CID).
 
 Nome do layout: Classificacao_Doencas
 
@@ -211,175 +213,122 @@ Origem dos campos: [Mock](../apoio/Mock.md)
 
 
 ## Kinships
-DESCRIÇÃO
+Tipos de relacionamentos e relações de vínculos entre pessoas.
 
-Nome do layout: Nome
+Nome do layout: Parentesco
 
 ### Schema no NavegaLibs
-```
-{
-
-}
-```
+[Schema Base](./Schema%20Base.md) com ID customizado baseado no campo "name".
 
 ### Modelagem base
-SE APLICAVEL
+Uso da coluna "Parentesco" da entidade PessoaUnificada, após passar por um [de-para](../apoio/De-Para.md).
+
+Além disso, os valores "Avô" e "Avó" são deparados para "oAvo" e "aAvo", para evitar duplicidades na geração do identificador, que não considera acentuação.
 
 ### Origem dos campos
-- **identificador**: Descr
-- campo_1: Descr
-- campo_2: Descr
+- **identificador**: Campo "Parentesco" da pessoa unificada, **considerando** o ajuste avô/avó mencionado.
+- name: Campo "Parentesco" da pessoa unificada, **sem considerar** o ajuste avô/avó mencionado.
+- isDefault: False (fixo no código)
+- status: Referência estrangeira do status ativo - 1 (fixo no código)
 
 
 
 ## MailingTypes
-DESCRIÇÃO
+Tipos de correspondência (no sentido de correspondência virtual, ou seja, mensagens de e-mail).
 
-Nome do layout: Nome
+É diferente de [EmailTypes](#emailtypes), esta outra tendo relação com tipos de endereço de email.
 
-### Schema no NavegaLibs
-```
-{
+Schema no NavegaLibs: [Schema Base](./Schema%20Base.md)
 
-}
-```
-
-### Modelagem base
-SE APLICAVEL
-
-### Origem dos campos
-- **identificador**: Descr
-- campo_1: Descr
-- campo_2: Descr
+Origem dos campos: [Mock](../apoio/Mock.md)
 
 
 
 ## MonetaryUnitTypes
-DESCRIÇÃO
+Tipos de unidades monetárias (cota, real, cruzeiro, índice...)
 
-Nome do layout: Nome
+Nome do layout: Tipo_Unidade_Monetaria
 
-### Schema no NavegaLibs
-```
-{
+Schema no NavegaLibs: [Schema Base](./Schema%20Base.md)
 
-}
-```
-
-### Modelagem base
-SE APLICAVEL
-
-### Origem dos campos
-- **identificador**: Descr
-- campo_1: Descr
-- campo_2: Descr
+Origem dos campos: [Mock](../apoio/Mock.md)
 
 
 
 ## PhoneTypes
-DESCRIÇÃO
+Tipos de telefone (celular, comercial, residencial...)
 
-Nome do layout: Nome
+Nome do layout: Tipo_Telefone
 
-### Schema no NavegaLibs
-```
-{
+Schema no NavegaLibs: [Schema Base](./Schema%20Base.md)
 
-}
-```
-
-### Modelagem base
-SE APLICAVEL
-
-### Origem dos campos
-- **identificador**: Descr
-- campo_1: Descr
-- campo_2: Descr
+Origem dos campos: [Mock](../apoio/Mock.md)
 
 
 
 ## ResignationTypes
-DESCRIÇÃO
+Tipos de encerramento de um vínculo empregatício.
 
-Nome do layout: Nome
+Nome do layout: Tipo_Desligamento
 
-### Schema no NavegaLibs
-```
-{
+Schema no NavegaLibs: [Schema Base](./Schema%20Base.md)
 
-}
-```
-
-### Modelagem base
-SE APLICAVEL
-
-### Origem dos campos
-- **identificador**: Descr
-- campo_1: Descr
-- campo_2: Descr
+Origem dos campos: [Mock](../apoio/Mock.md)
 
 
 
 ## States
-DESCRIÇÃO
+Dados de estados, províncias e outras denominações socioculturais de divisões dentro de nações.
 
-Nome do layout: Nome
+Nome do layout: Estados
 
 ### Schema no NavegaLibs
 ```
 {
-
+  name: { type: String, required: true, maxLength: 100, trim: true },
+  code: { type: String, required: true, maxLength: 2, trim: true },
+  capital: { type: Schema.Types.ObjectId, ref: 'cities' },
+  country: { type: Schema.Types.ObjectId, ref: 'countries', required: true },
 }
 ```
 
 ### Modelagem base
-SE APLICAVEL
+Usa o campo de "UF" da PessoaUnificada para - por meio de um de-para - enriquecer o dataframe com os campos "NomeUF" e "CodUF".
+
+Além disso, esse depara também transforma estados inválidos no estado "NI - Não Informado".
 
 ### Origem dos campos
 - **identificador**: Descr
-- campo_1: Descr
-- campo_2: Descr
-
+- name: Campo "NomeUF", vindo do de-para de estados aplicado sobre o campo "UF" da PessoaUnificada.
+- code: Campo "UF" da PessoaUnificada.
+- capital: Referência estendida a [Cities](#cities). Como esse campo causa uma dependência cíclica entre Cities e States - e a chave de States em Cities é mais forte - o atributo de capital não é preenchido na migração.
+- country: Referência estrangeira a [Countries](#countries), fixa na migração para ser sempre Brasil ("BRA").
 
 
 ## TaxRegimeTypes
-DESCRIÇÃO
+Tipos de regimes tributários (progressivo / regressivo).
 
-Nome do layout: Nome
+Nome do layout: Tipo_Regime_Tributario
 
-### Schema no NavegaLibs
-```
-{
+Schema no NavegaLibs: [Schema Base](./Schema%20Base.md)
 
-}
-```
-
-### Modelagem base
-SE APLICAVEL
-
-### Origem dos campos
-- **identificador**: Descr
-- campo_1: Descr
-- campo_2: Descr
+Origem dos campos: [Mock](../apoio/Mock.md)
 
 
 
 ## RecoveryTemporalIndex
-DESCRIÇÃO
+Armazenamento de índices históricos (INPC, IPCA, Salário Mínimo...) para serem usados como base de cálculos e recálculos do sistema.
 
-Nome do layout: Nome
+Nome do layout: Recuperacao_Indice_Temporal
 
 ### Schema no NavegaLibs
 ```
 {
-
+  url: { type: String, required: false },
+  code: { type: String, required: false },
+  name: { type: String, required: true },
+  effectiveDate: new EffectiveDate(),
 }
 ```
 
-### Modelagem base
-SE APLICAVEL
-
-### Origem dos campos
-- **identificador**: Descr
-- campo_1: Descr
-- campo_2: Descr
+Origem dos campos: [Mock](../apoio/Mock.md)
