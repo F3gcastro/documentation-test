@@ -5,7 +5,7 @@
 - [BeneficiaryTypes](#beneficiarytypes)
 - [BenefitGroups](#benefitgroup)
 - [BenefitPaymentReceiving](#benefitpaymentreceiving)
-- [BenefitTypes](benefittype)
+- [BenefitTypes](#benefittype)
 - [CalculationSeries](#calculationseries)
 - [Companies](#companies)
 - [CompanyTypes](#companytypes)
